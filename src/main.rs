@@ -75,6 +75,7 @@ fn try_read_dir(name: &str, dir: &Path) {
     }
 }
 
+// Determines if the current directory has a solution file.
 fn is_solution() -> Option<bool> {
     for entry in WalkDir::new("./").into_iter().filter_map(|e| e.ok()) {
         if entry.path().extension().and_then(OsStr::to_str) == Some("sln") {

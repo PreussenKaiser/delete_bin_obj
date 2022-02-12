@@ -1,15 +1,13 @@
 [package]
 name = "delete_bin_obj"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["PKaiser"]
-license = "MIT OR Apache-2.0"
+license = "MIT"
 description = "Deletes the bin and obj folders in a VS solution."
 readme = "README.md"
 repository = "https://github.com/PreussenKaiser/delete_bin_obj"
 categories = ["command-line-utilities"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 structopt = "0.3.26"
