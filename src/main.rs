@@ -49,8 +49,10 @@ fn delete_directories(name: &str) {
 
 // Reads all directories with the name parameter.
 fn read_directories(name: &str) {
-    for entry in WalkDir::new("./").into_iter().filter_map(|e| e.ok()) {
-        try_read_dir(&name, entry.path());
+    if is_solution().is_some() {
+        for entry in WalkDir::new("./").into_iter().filter_map(|e| e.ok()) {
+            try_read_dir(&name, entry.path());
+        }
     }
 }
 
@@ -68,10 +70,8 @@ fn try_delete_dir(name: &str, dir: &Path) {
 // name: Name of the directory.
 // dir: The directory's path.
 fn try_read_dir(name: &str, dir: &Path) {
-    if is_solution().is_some() {
-        if dir.ends_with(Path::new(&name)) {
-            println!("Found {}", dir.display());
-        }
+    if dir.ends_with(Path::new(&name)) {
+        println!("Found {}", dir.display());
     }
 }
 
