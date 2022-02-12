@@ -1,13 +1,13 @@
-#![allow(unused_must_use)]
-
-use std::io;
+use std::ffi::OsStr;
 use std::fs;
 use std::path::Path;
 use structopt::StructOpt;
 use walkdir::WalkDir;
 
 #[derive(StructOpt)]
+/// Deletes the bin and obj folders in a VS solution.
 struct Cli {
+    /// help, delete and read.
     command: String,
 }
 
@@ -39,21 +39,19 @@ fn main() {
 }
 
 // Deletes all directories with the name parameter.
-fn delete_directories(name: &str) -> io::Result<()> {
-    for entry in WalkDir::new("./") {
-        try_delete_dir(&name, entry?.path());
+fn delete_directories(name: &str) {
+    if is_solution().is_some() {
+        for entry in WalkDir::new("./").into_iter().filter_map(|e| e.ok()) {
+            try_delete_dir(&name, entry.path());
+        }
     }
-
-    Ok(())
 }
 
 // Reads all directories with the name parameter.
-fn read_directories(name: &str) -> io::Result<()> {
-    for entry in WalkDir::new("./") {
-        try_read_dir(&name, entry?.path());
+fn read_directories(name: &str) {
+    for entry in WalkDir::new("./").into_iter().filter_map(|e| e.ok()) {
+        try_read_dir(&name, entry.path());
     }
-
-    Ok(())
 }
 
 // Deletes a directory.
@@ -61,7 +59,7 @@ fn read_directories(name: &str) -> io::Result<()> {
 // dir: The directory's path.
 fn try_delete_dir(name: &str, dir: &Path) {
     if dir.ends_with(Path::new(&name)) {
-        fs::remove_dir_all(dir);
+        fs::remove_dir_all(dir).unwrap();
         println!("Deleted {}", dir.display());
     }
 }
@@ -70,7 +68,19 @@ fn try_delete_dir(name: &str, dir: &Path) {
 // name: Name of the directory.
 // dir: The directory's path.
 fn try_read_dir(name: &str, dir: &Path) {
-    if dir.ends_with(Path::new(&name)) {
-        println!("Found {}", dir.display());
+    if is_solution().is_some() {
+        if dir.ends_with(Path::new(&name)) {
+            println!("Found {}", dir.display());
+        }
     }
+}
+
+fn is_solution() -> Option<bool> {
+    for entry in WalkDir::new("./").into_iter().filter_map(|e| e.ok()) {
+        if entry.path().extension().and_then(OsStr::to_str) == Some("sln") {
+            return Some(true)
+        }
+    }
+
+    None
 }
