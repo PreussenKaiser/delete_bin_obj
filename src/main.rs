@@ -3,8 +3,8 @@
 use std::io;
 use std::fs;
 use std::path::Path;
-use std::path::PathBuf;
 use structopt::StructOpt;
+use walkdir::WalkDir;
 
 #[derive(StructOpt)]
 struct Cli {
@@ -14,20 +14,17 @@ struct Cli {
 fn main() {
     let args = Cli::from_args();
 
-    let bin = String::from("bin");
-    let obj = String::from("obj");
-
     match args.command.as_str() {
         "help" => print_commands(),
 
         "delete" => {
-            delete_directories(&bin, &PathBuf::from("./"));
-            delete_directories(&obj, &PathBuf::from("./"));
+            delete_directories("bin");
+            delete_directories("obj");
         },
 
         "read" => {
-            read_directories(&bin);
-            read_directories(&obj);
+            read_directories("bin");
+            read_directories("obj");
         },
 
         _ => println!("{} is an unknown command!", args.command),
@@ -41,32 +38,39 @@ fn main() {
     }
 }
 
-// Deletes bin and obj directories.
-fn delete_directories(name: &String, dir: &Path) -> io::Result<()> {      
-    for entry in fs::read_dir(&dir)? {
-        let entry = entry?;
-        let path = entry.path();
-
-        if path == PathBuf::from(&name) {
-            fs::remove_dir_all(path);
-        } else {
-            delete_directories(&name, &path);
-        }
+// Deletes all directories with the name parameter.
+fn delete_directories(name: &str) -> io::Result<()> {
+    for entry in WalkDir::new("./") {
+        try_delete_dir(&name, entry?.path());
     }
 
     Ok(())
 }
 
-// Reads all detected bin and obj directories.
-fn read_directories(name: &String) {
-    let paths = fs::read_dir("./").unwrap();
+// Reads all directories with the name parameter.
+fn read_directories(name: &str) -> io::Result<()> {
+    for entry in WalkDir::new("./") {
+        try_read_dir(&name, entry?.path());
+    }
 
-    for path in paths {
-        let dir = format!("./{}", &name);
-        let cur_dir = format!("{}", &path.unwrap().path().display());
+    Ok(())
+}
 
-        if &cur_dir == &dir {
-            println!("{}", &cur_dir);
-        }
+// Deletes a directory.
+// name: Name of the directory.
+// dir: The directory's path.
+fn try_delete_dir(name: &str, dir: &Path) {
+    if dir.ends_with(Path::new(&name)) {
+        fs::remove_dir_all(dir);
+        println!("Deleted {}", dir.display());
+    }
+}
+
+// Prints a directory.
+// name: Name of the directory.
+// dir: The directory's path.
+fn try_read_dir(name: &str, dir: &Path) {
+    if dir.ends_with(Path::new(&name)) {
+        println!("Found {}", dir.display());
     }
 }
