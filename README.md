@@ -1,5 +1,5 @@
-# DeleteBinObj
+# delete_bin_obj
 Deletes the bin and obj folders in a VS solution.
 
 ## Instructions
-To be determined.
+TBD gotta publish it.
