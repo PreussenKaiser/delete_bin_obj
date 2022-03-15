@@ -1,10 +1,10 @@
 [package]
 name = "delete_bin_obj"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 authors = ["PKaiser"]
 license = "MIT"
-description = "Deletes the bin and obj folders in a VS solution."
+description = "Deletes the /bin and /obj directories in a VS solution."
 readme = "README.md"
 repository = "https://github.com/PreussenKaiser/delete_bin_obj"
 categories = ["command-line-utilities"]
