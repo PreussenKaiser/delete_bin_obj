@@ -1,15 +1,24 @@
 /// Directory commands.
-mod commands {
+pub mod commands {
     use std::{fs, path::Path};
     use walkdir::WalkDir;
 
-    pub fn for_each_child(f: fn(&Path)) {
+    /// Executes a predicate on the current directory.
+    pub fn execute(f: fn(&Path)) {
         let current_directory = WalkDir::new("./");
 
         current_directory
             .into_iter()
             .filter(|d| d.is_ok())
-            .for_each(|d| f(d.unwrap().path()));
+            .for_each(|d| {
+                let path = d
+                    .unwrap()
+                    .path();
+
+                if (path.ends_with(name)) {
+                    f(path);
+                }
+            });
     }
 
     /// Prints the found directory to the console.
